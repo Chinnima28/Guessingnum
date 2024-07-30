@@ -3,68 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POMOFOMO</title>
-    <style>
-        body {
-            background-color: #2c3e50;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-        h1 {
-            font-size: 4rem;
-            color: #e74c3c;
-        }
-        input[type=text], button {
-            padding: 1rem;
-            margin: 0.5rem;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            border: none;
-        }
-        button {
-            background-color: #e74c3c;
-            color: white;
-            cursor: pointer;
-        }
-        #countdown {
-            font-size: 3rem;
-            margin-top: 2rem;
-        }
-    </style>
+    <title>Guess the Number Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>POMOFOMO</h1>
-    <div>
-        <input type="text" id="timeInput" placeholder="Enter time in minutes">
-        <button onclick="startPomodoro()">Start</button>
+    <div class="container">
+        <h1>Guess the Number</h1>
+        <input id="guessnumber" type="number" min="1" max="10" placeholder="Enter a number between 1-10">
+        <button onclick="check()">Check</button>
+        <p id="result"></p>
+        <p id="score">Score: 10</p>
     </div>
-    <div id="countdown">00:00</div>
+
     <script>
-        function startPomodoro() {
-            let timeInput = document.getElementById('timeInput').value;
-            let time = parseInt(timeInput) * 60;
-            let countdownElement = document.getElementById('countdown');
+        // Selecting input box and other elements
+        var guessnumber = document.getElementById("guessnumber");
+        var result = document.getElementById("result");
+        var scoreDisplay = document.getElementById("score");
+        
+        var randomNumber = Math.floor(Math.random() * 10) + 1;
+        var score = 10;
 
-            function updateCountdown() {
-                let minutes = Math.floor(time / 60);
-                let seconds = time % 60;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
-                countdownElement.innerHTML = `${minutes}:${seconds}`;
-                time--;
-
-                if (time < 0) {
-                    clearInterval(interval);
-                    alert('Time is up!');
+        function check() {
+            var enteredNumber = guessnumber.value;
+            if (randomNumber == enteredNumber) {
+                console.log("Right");
+                result.textContent = "Right";
+                Swal.fire({
+                    title: 'Congratulations!',
+                    text: 'YOU WON...',
+                    icon: 'success',
+                    confirmButtonText: 'Play Again'
+                }).then(() => {
+                    resetGame();
+                });
+            } else {
+                score -= 1;
+                scoreDisplay.textContent = "Score: " + score;
+                result.textContent = "Wrong";
+                Swal.fire({
+                    title: 'Try Again!',
+                    text: 'Wrong number, keep guessing!',
+                    icon: 'error',
+                    confirmButtonText: 'Continue'
+                });
+                if (score == 0) {
+                    Swal.fire({
+                        title: 'Game Over!',
+                        text: 'The correct number was ' + randomNumber,
+                        icon: 'warning',
+                        confirmButtonText: 'Play Again'
+                    }).then(() => {
+                        resetGame();
+                    });
                 }
             }
+        }
 
-            let interval = setInterval(updateCountdown, 1000);
+        function resetGame() {
+            randomNumber = Math.floor(Math.random() * 10) + 1;
+            score = 10;
+            scoreDisplay.textContent = "Score: " + score;
+            guessnumber.value = '';
+            result.textContent = '';
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
+
+
+
